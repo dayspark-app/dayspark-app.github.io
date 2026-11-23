@@ -500,7 +500,7 @@ body {
 /* Progress Bar with 75% Threshold Flag */
 .progress-wrap {
   position: relative;
-  margin-bottom: 14px;
+  margin-bottom: 4px;
 }
 
 .threshold-flag {

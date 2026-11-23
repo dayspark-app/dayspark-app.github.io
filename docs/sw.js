@@ -1,4 +1,4 @@
-const CACHE_NAME = 'pa-shell-v6';
+const CACHE_NAME = 'pa-shell-v7';
 const SHELL_ASSETS = [
   './',
   './index.html',

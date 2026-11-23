@@ -472,10 +472,6 @@
       statusPillHtml = `<span class="pill pill-orange">Ориентир ${targetPct}%</span>`;
     }
 
-    const pauseChipHtml = stats.totalPausedSlots > 0
-      ? `<span class="metric-chip">☕ Паузы учтены без штрафа</span>`
-      : '';
-
     const heroHtml = `
       <article class="comic-card hero-card">
         <div class="hero-top">
@@ -501,13 +497,6 @@
             <div class="progress-fill ${pctVal === 0 ? 'is-zero' : ''} ${isOnTrack ? 'is-on-track' : ''}" style="width: ${pctVal}%"></div>
             <div class="threshold-line" style="left: ${targetPct}%"></div>
           </div>
-        </div>
-
-        <div class="hero-metrics">
-          <span class="metric-chip">⚡ ${stats.teamDoneTotal} ${pluralRu(stats.teamDoneTotal, 'тренировка', 'тренировки', 'тренировок')}</span>
-          <span class="metric-chip">📅 Неделя ${Math.max(1, stats.currentWeekNum)} из ${stats.totalWeeks}</span>
-          <span class="metric-chip">🎯 По ${stats.weeklyTarget} в неделю</span>
-          ${pauseChipHtml}
         </div>
       </article>
     `;
