@@ -1,0 +1,14 @@
+# Private source content & local instructions (NEVER commit to git!)
+content/
+AGENTS.md
+
+# Local vault password files (NEVER commit to git!)
+.vault-pass
+.env
+.env.local
+
+# macOS & Python caches
+.DS_Store
+__pycache__/
+*.pyc
+.venv/
