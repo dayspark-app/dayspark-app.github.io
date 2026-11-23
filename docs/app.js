@@ -492,11 +492,10 @@
         </div>
 
         <div class="progress-wrap" aria-label="Прогресс команды: ${pctDisplay} при цели ${targetPct}%">
-          <div class="threshold-flag" style="left: ${targetPct}%">Цель ${targetPct}%</div>
           <div class="progress-track">
             <div class="progress-fill ${pctVal === 0 ? 'is-zero' : ''} ${isOnTrack ? 'is-on-track' : ''}" style="width: ${pctVal}%"></div>
-            <div class="threshold-line" style="left: ${targetPct}%"></div>
           </div>
+          <div class="threshold-line" style="left: ${targetPct}%" aria-hidden="true"></div>
         </div>
       </article>
     `;

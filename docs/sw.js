@@ -1,4 +1,4 @@
-const CACHE_NAME = 'pa-shell-v7';
+const CACHE_NAME = 'pa-shell-v8';
 const SHELL_ASSETS = [
   './',
   './index.html',
@@ -36,35 +36,17 @@ self.addEventListener('fetch', (event) => {
   const url = new URL(req.url);
   if (url.origin !== self.location.origin) return;
 
-  // Encrypted vault: network-first so updates show immediately, cache fallback offline
-  if (url.pathname.endsWith('/vault.enc') || url.pathname.endsWith('vault.enc')) {
-    event.respondWith(
-      fetch(req, { cache: 'no-store' })
-        .then((res) => {
-          if (res.ok) {
-            const copy = res.clone();
-            caches.open(CACHE_NAME).then((cache) => cache.put(req, copy));
-          }
-          return res;
-        })
-        .catch(() => caches.match(req))
-    );
-    return;
-  }
-
-  // Static app shell: stale-while-revalidate
+  // Network-first for all same-origin files so UI & vault updates appear immediately,
+  // with offline cache fallback when there is no connection.
   event.respondWith(
-    caches.match(req).then((cached) => {
-      const networkFetch = fetch(req)
-        .then((res) => {
-          if (res.ok) {
-            const copy = res.clone();
-            caches.open(CACHE_NAME).then((cache) => cache.put(req, copy));
-          }
-          return res;
-        })
-        .catch(() => cached);
-      return cached || networkFetch;
-    })
+    fetch(req, { cache: 'no-store' })
+      .then((res) => {
+        if (res.ok) {
+          const copy = res.clone();
+          caches.open(CACHE_NAME).then((cache) => cache.put(req, copy));
+        }
+        return res;
+      })
+      .catch(() => caches.match(req))
   );
 });
