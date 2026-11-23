@@ -274,12 +274,41 @@ def build_bundle(max_dim: int, quality: int) -> tuple[bytes, dict]:
             meta["caption"] = caption
             photos_out.append(meta)
 
+        sticker_out = None
+        raw_sticker = mem.get("sticker")
+        if raw_sticker:
+            if isinstance(raw_sticker, str):
+                s_fname, s_caption = raw_sticker.strip(), ""
+            else:
+                s_fname = str(raw_sticker.get("file", "")).strip()
+                s_caption = str(raw_sticker.get("caption", "")).strip()
+            if s_fname:
+                cache_key = f"sticker:{s_fname}"
+                if cache_key not in photo_cache:
+                    src_path = PHOTOS_DIR / s_fname
+                    orig_size = src_path.stat().st_size if src_path.is_file() else 0
+                    raw_bytes, w, h, mime = compress_photo(src_path, max_dim=512, quality=85)
+                    offset = len(photo_blobs)
+                    photo_blobs.extend(raw_bytes)
+                    orig_photo_bytes += orig_size
+                    comp_photo_bytes += len(raw_bytes)
+                    photo_cache[cache_key] = {
+                        "mime": mime,
+                        "offset": offset,
+                        "length": len(raw_bytes),
+                        "width": w,
+                        "height": h,
+                    }
+                sticker_out = dict(photo_cache[cache_key])
+                sticker_out["caption"] = s_caption
+
         memories.append({
             "id": str(mem.get("id") or f"mem-{date_val}-{idx}"),
             "date": date_val,
             "tag": tag,
             "title": str(mem.get("title", "")).strip(),
             "text": str(mem.get("text", "")).strip(),
+            "sticker": sticker_out,
             "photos": photos_out,
         })
 

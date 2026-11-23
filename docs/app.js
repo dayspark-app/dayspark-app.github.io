@@ -197,6 +197,14 @@
     revokeObjectUrls();
 
     for (const mem of parsed.memories || []) {
+      if (mem.sticker && typeof mem.sticker.offset === 'number') {
+        const sStart = blobsBase + mem.sticker.offset;
+        const sEnd = sStart + mem.sticker.length;
+        const sBlob = new Blob([plainBytes.subarray(sStart, sEnd)], { type: mem.sticker.mime || 'image/jpeg' });
+        const sUrl = URL.createObjectURL(sBlob);
+        objectUrls.push(sUrl);
+        mem.sticker.url = sUrl;
+      }
       for (const photo of mem.photos || []) {
         const start = blobsBase + photo.offset;
         const end = start + photo.length;
@@ -651,17 +659,45 @@
         `
         : '';
 
+      const stickerHtml = mem.sticker && mem.sticker.url
+        ? `
+          <button
+            type="button"
+            class="memory-sticker-btn"
+            data-sticker-mem-id="${escHtml(mem.id)}"
+            aria-label="Увеличить стикер: ${escHtml(mem.sticker.caption || mem.title)}"
+          >
+            <img src="${escHtml(mem.sticker.url)}" alt="${escHtml(mem.sticker.caption || mem.title)}" loading="lazy">
+          </button>
+        `
+        : '';
+
       return `
         <article class="comic-card memory-card">
           <div class="memory-meta">
             <time class="memory-date" datetime="${escHtml(mem.date)}">${escHtml(formatDateRu(mem.date))}</time>
           </div>
           <h3 class="memory-title">${escHtml(mem.title)}</h3>
-          ${mem.text ? `<p class="memory-text">${escHtml(mem.text)}</p>` : ''}
+          ${(stickerHtml || mem.text) ? `
+            <div class="memory-body">
+              ${stickerHtml}
+              ${mem.text ? `<p class="memory-text">${escHtml(mem.text)}</p>` : ''}
+            </div>
+          ` : ''}
           ${photosHtml}
         </article>
       `;
     }).join('');
+
+    memoriesContent.querySelectorAll('.memory-sticker-btn').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const memId = btn.dataset.stickerMemId;
+        const mem = memories.find((m) => m.id === memId);
+        if (mem && mem.sticker && mem.sticker.url) {
+          openLightbox({ ...mem, photos: [mem.sticker] }, 0);
+        }
+      });
+    });
 
     memoriesContent.querySelectorAll('.photo-tile').forEach((tile) => {
       tile.addEventListener('click', () => {

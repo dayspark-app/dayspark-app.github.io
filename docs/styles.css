@@ -1069,6 +1069,40 @@ body {
   letter-spacing: -0.015em;
 }
 
+.memory-body::after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+.memory-sticker-btn {
+  float: right;
+  width: 88px;
+  height: 88px;
+  margin: 2px 0 8px 12px;
+  padding: 0;
+  border: var(--border);
+  border-radius: 14px;
+  background: var(--yellow-soft);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+  cursor: pointer;
+  transform: rotate(2.5deg);
+  transition: transform 0.1s ease, box-shadow 0.1s ease;
+}
+
+.memory-sticker-btn:active {
+  transform: rotate(2.5deg) translate(2px, 2px);
+  box-shadow: 1px 1px 0 var(--ink);
+}
+
+.memory-sticker-btn img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
 .memory-text {
   margin: 0;
   font-size: 14.5px;
